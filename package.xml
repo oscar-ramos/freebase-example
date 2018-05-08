@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>freebase-example</name>
+  <version>0.0.1</version>
+  <description>
+
+    An example that illustrates the concept of how to control a robot with a
+    floating base
+
+  </description>
+
+  <maintainer email="oramos@utec.edu.pe">oramos</maintainer>
+  <license>TODO</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+</package>
