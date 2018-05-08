@@ -68,16 +68,29 @@ prl_des = robot.fkine_rleft()[0:3,3]
 # Change initial configuration
 pfr_des[2] = 0.15
 pfr_des[1] += 0.05
-# pfl_des[2] = 0.10
-# pfl_des[1] += -0.05
-# pfr_des[2] = 0.20
-# pfr_des[1] += 0.05
-# pfl_des[2] = 0.05
-# pfl_des[1] += -0.05
+
+# Create logs
+fpfr_des = open("/tmp/pfr_des.txt", "w")
+fq = open("/tmp/q.txt", "w")
+fpfr = open("/tmp/pfr.txt", "w")
 
 rate = rospy.Rate(freq)
 q = np.copy(q0)
+# Initial time
+t0 = rospy.get_time()
 while not rospy.is_shutdown():
+    # Current time
+    t = np.round(rospy.get_time() - t0, 3)
+    print t
+    # Logs
+    fpfr_des.write(str(t)+" "+str(pfr_des[0])+" "+str(pfr_des[1])+" "+str(pfr_des[2])+"\n")
+    fq.write(str(t)+" ")
+    for j in range(19):
+        fq.write(str(q[j])+" ")
+    fq.write("\n")
+    pfr = robot.fkine_fright()[0:3,3]
+    fpfr.write(str(t)+" "+str(pfr[0])+" "+str(pfr[1])+" "+str(pfr[2])+"\n")
+    
     # Errors
     efr = robot.error_position_fright(pfr_des)
     efl = robot.error_position_fleft(pfl_des)
@@ -104,8 +117,9 @@ while not rospy.is_shutdown():
     # Integrate position and joint configuration
     q[0:3] = q[0:3] + dt*dq[0:3]
     q[7:]  = q[7:] + dt*dq[7:]
-    print 'dq:', dq
-    print 'q:', np.round(q,2), '\n'
+    if (False):
+        print 'dq:', dq
+        print 'q:', np.round(q,2), '\n'
     # Update the robot configuration
     robot.update_config(q)
 
@@ -122,5 +136,9 @@ while not rospy.is_shutdown():
     
     rate.sleep()
 
+# Close logs
+fpfr_des.close()
+fq.close()
+fpfr.close()
 
 
